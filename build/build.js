@@ -1,93 +1,58 @@
-var ColorHelper = (function () {
-    function ColorHelper() {
-    }
-    ColorHelper.getColorVector = function (c) {
-        return createVector(red(c), green(c), blue(c));
-    };
-    ColorHelper.rainbowColorBase = function () {
-        return [
-            color('red'),
-            color('orange'),
-            color('yellow'),
-            color('green'),
-            color(38, 58, 150),
-            color('indigo'),
-            color('violet')
-        ];
-    };
-    ColorHelper.getColorsArray = function (total, baseColorArray) {
-        var _this = this;
-        if (baseColorArray === void 0) { baseColorArray = null; }
-        if (baseColorArray == null) {
-            baseColorArray = ColorHelper.rainbowColorBase();
-        }
-        var rainbowColors = baseColorArray.map(function (x) { return _this.getColorVector(x); });
-        ;
-        var colours = new Array();
-        for (var i = 0; i < total; i++) {
-            var colorPosition = i / total;
-            var scaledColorPosition = colorPosition * (rainbowColors.length - 1);
-            var colorIndex = Math.floor(scaledColorPosition);
-            var colorPercentage = scaledColorPosition - colorIndex;
-            var nameColor = this.getColorByPercentage(rainbowColors[colorIndex], rainbowColors[colorIndex + 1], colorPercentage);
-            colours.push(color(nameColor.x, nameColor.y, nameColor.z));
-        }
-        return colours;
-    };
-    ColorHelper.getColorByPercentage = function (firstColor, secondColor, percentage) {
-        var firstColorCopy = firstColor.copy();
-        var secondColorCopy = secondColor.copy();
-        var deltaColor = secondColorCopy.sub(firstColorCopy);
-        var scaledDeltaColor = deltaColor.mult(percentage);
-        return firstColorCopy.add(scaledDeltaColor);
-    };
-    return ColorHelper;
-}());
-var PolygonHelper = (function () {
-    function PolygonHelper() {
-    }
-    PolygonHelper.draw = function (numberOfSides, width) {
-        push();
-        var angle = TWO_PI / numberOfSides;
-        var radius = width / 2;
-        beginShape();
-        for (var a = 0; a < TWO_PI; a += angle) {
-            var sx = cos(a) * radius;
-            var sy = sin(a) * radius;
-            vertex(sx, sy);
-        }
-        endShape(CLOSE);
-        pop();
-    };
-    return PolygonHelper;
-}());
-var numberOfShapesControl;
+var nCols = 6;
+var nRows = 6;
+var currentAngle = 0;
+var targetAngle = 0;
+var vLines = [];
+var hLines = [];
 function setup() {
-    console.log("🚀 - Setup initialized - P5 is running");
-    createCanvas(windowWidth, windowHeight);
-    rectMode(CENTER).noFill().frameRate(30);
-    numberOfShapesControl = createSlider(1, 30, 15, 1).position(10, 10).style("width", "100px");
+    noStroke();
+    var canvasSize = 1200;
+    createCanvas(canvasSize, canvasSize);
+    background(200);
+    angleMode(DEGREES);
+    setInterval(function () { return targetAngle += 90; }, 2500);
+    var centerPoints = get2DGridCenterPoints(nRows, nCols);
+    var xCoords = [100, 300, 500, 700, 900, 1100];
+    centerPoints.forEach(function (centerPoint) {
+        xCoords.indexOf(centerPoint[0]) % 2 === 0 ?
+            vLines.push(createVector(centerPoint[0], centerPoint[1])) :
+            hLines.push(createVector(centerPoint[0], centerPoint[1]));
+    });
 }
-function windowResized() {
-    resizeCanvas(windowWidth, windowHeight);
+function get2DGridCenterPoints(rows, cols) {
+    var shapeCenterX = 0;
+    var gridUnitWidth = width / rows;
+    var shapeCenterY = 0;
+    var gridUnitHeight = height / cols;
+    var coordArray = [];
+    for (var i = 1; i <= rows; i++) {
+        shapeCenterX = gridUnitWidth * i - gridUnitWidth / 2;
+        for (var j = 1; j <= cols; j++) {
+            shapeCenterY = gridUnitHeight * j - gridUnitHeight / 2;
+            coordArray.push([shapeCenterX, shapeCenterY]);
+        }
+    }
+    return coordArray;
 }
 function draw() {
-    background(0);
-    translate(width / 2, height / 2);
-    var numberOfShapes = numberOfShapesControl.value();
-    var colours = ColorHelper.getColorsArray(numberOfShapes);
-    var speed = (frameCount / (numberOfShapes * 30)) * 2;
-    for (var i = 0; i < numberOfShapes; i++) {
-        push();
-        var lineWidth = 8;
-        var spin = speed * (numberOfShapes - i);
-        var numberOfSides = 3 + i;
-        var width_1 = 40 * i;
-        strokeWeight(lineWidth);
-        stroke(colours[i]);
-        rotate(spin);
-        PolygonHelper.draw(numberOfSides, width_1);
-        pop();
+    fill(1);
+    rectMode(CENTER);
+    if (currentAngle < targetAngle) {
+        currentAngle++;
     }
+    vLines.forEach(function (vector) {
+        push();
+        translate(vector.x, vector.y - 100);
+        rotate(currentAngle);
+        rect(0, 0, 9, height / 6);
+        pop();
+    });
+    hLines.forEach(function (vector) {
+        push();
+        translate(vector.x - 100, vector.y);
+        rotate(currentAngle);
+        rect(0, 0, width / 6, 9);
+        pop();
+    });
 }
-//# sourceMappingURL=../sketch/sketch/build.js.map
+//# sourceMappingURL=build.js.map
