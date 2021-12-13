@@ -11,7 +11,6 @@ function setup() {
   noStroke();
   let canvasSize = 1200;
   createCanvas(canvasSize, canvasSize);
-  background(200);
   angleMode(DEGREES);
   setInterval(()=> targetAngle+=90, 2500);
   
@@ -46,6 +45,7 @@ function get2DGridCenterPoints(rows: number, cols: number): number[][] {
 }
 
 function draw() {
+  background(255);
   fill(1);
   rectMode(CENTER)
   if(currentAngle < targetAngle){
@@ -53,19 +53,17 @@ function draw() {
   }
   vLines.forEach( vector => {
     push()
-    translate(vector.x, vector.y - 100)
+    translate(vector.x, vector.y)
     rotate(currentAngle)
     rect(0, 0, 9, height/6)
     pop()
   })
-
+  
   hLines.forEach(vector => {
     push()
-    translate(vector.x - 100, vector.y)
+    translate(vector.x, vector.y)
     rotate(currentAngle)
     rect(0, 0, width/6, 9)
     pop()
   })
 }
-
-  
