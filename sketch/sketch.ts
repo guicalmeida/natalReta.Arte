@@ -48,8 +48,8 @@ function get2DGridCenterPoints(rows: number, cols: number): number[][] {
 }
 
 function draw() {
-  background(255);
-  fill(1);
+  background(201,38,44);
+  fill(255);
   rectMode(CENTER)
   if (currentAngle < targetAngle) {
     currentAngle++
