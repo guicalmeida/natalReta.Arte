@@ -1,0 +1,40 @@
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+.p5Canvas {
+  margin: 50px;
+}
+
+#configs {
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.4);
+  width: fit-content;
+  height: fit-content;
+  padding: 18px;
+  margin-left: 100px;
+  margin-top: 20px;
+}
+
+#bgPicker, #evenPicker, #oddPicker {
+  display: flex;
+  align-items: center;
+}
+
+#sliders {
+  margin-bottom: 20px;
+
+}
+
+.pickerText {
+  margin-left: 20px;
+}
+
+#canvasDiv {
+  display: flex;
+  flex-direction: row-reverse;
+  width: fit-content;
+  height: fit-content;
+}

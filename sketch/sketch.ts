@@ -18,61 +18,75 @@ let gridXCenterCoords: number[] = [];
  */
 let canvasSize = 800;
 
-/**
- * each line thickness, in pixels
- */
-let lineThickness = 6;
-
-let horizontalLinesSlider: p5.Element
-let verticalLinesSlider: p5.Element
-let hSliderValue: number, vSliderValue: number, currentXValue: number, currentYValue: number;
-
 let evenLines: p5.Vector[] = [];
 let oddLines: p5.Vector[] = [];
 let lineSize: number;
 
-function setup() {
-  noStroke();
-  createCanvas(canvasSize, canvasSize);
-  angleMode(DEGREES);
-  setInterval(() => targetAngle += 90, 2500);
-  horizontalLinesSlider = createSlider(1, 10, 6);
-  verticalLinesSlider = createSlider(1, 10, 6);
-  
+let wWidth: number;
+let wHeight: number;
 
+function setup() {
+  wWidth = windowWidth;
+  wHeight = windowHeight;
+
+  noStroke();
+  createCanvas(windowHeight, windowHeight - 100).parent('canvasDiv');
+  angleMode(DEGREES);
+
+  setInterval(() => targetAngle += 90, 3000);
+  initInteractiveElements();
 }
 
 function draw() {
+
+  document.getElementById("body").style.backgroundColor = backgroundColorPicker.color();
+
   hSliderValue = horizontalLinesSlider.value() as number;
   vSliderValue = verticalLinesSlider.value() as number;
+  lineThicknessValue = lineThicknessSlider.value() as number;
+
+  hSliderP.html('colunas: ' + hSliderValue.toString());
+  vSliderP.html('linhas: ' + vSliderValue.toString());
+  lineThicknessP.html('grossura das linhas: ' + lineThicknessValue.toString());
 
   lineSize = (height / hSliderValue) > (width / vSliderValue) ? width / vSliderValue : (height / hSliderValue)
 
-  if (hSliderValue !== currentXValue || vSliderValue !== currentYValue){
+  if (hSliderValue !== currentXValue || vSliderValue !== currentYValue || windowWidth !== wWidth || windowHeight !== wHeight) {
     currentYValue = vSliderValue;
     currentXValue = hSliderValue;
     get2DGridCenterPoints(hSliderValue, vSliderValue)
   }
 
-  background(255);
-  fill(1);
+  background(backgroundColorPicker.color());
   rectMode(CENTER)
   if (currentAngle < targetAngle) {
     currentAngle++
   }
   evenLines.forEach(vector => {
     push()
+    fill(evenLinesColorPicker.color());
     translate(vector.x, vector.y)
     rotate(currentAngle)
-    rect(0, 0, lineThickness, lineSize)
+    rect(0, 0, lineThicknessSlider.value() as number, lineSize)
     pop()
   })
 
   oddLines.forEach(vector => {
     push()
+    fill(oddLinesColorPicker.color());
     translate(vector.x, vector.y)
     rotate(currentAngle)
-    rect(0, 0, lineSize, lineThickness)
+    rect(0, 0, lineSize, lineThicknessSlider.value() as number)
     pop()
   })
+
+  push()
+  textSize(20);
+  text(hSliderValue, 0, 0);
+  fill(0)
+  pop()
+}
+
+function windowResized() {
+  resizeCanvas(windowHeight, windowHeight - 100);
 }
