@@ -77,14 +77,14 @@ function get2DGridCenterPoints(rows: number, cols: number): number[][] {
 }
 
 function draw() {
-  background(255);
-  fill(1);
+  background(201,38,44);
   rectMode(CENTER)
   if (currentAngle < targetAngle) {
     currentAngle++
   }
   vLines.forEach(vector => {
     push()
+    fill(255);
     translate(vector.x, vector.y)
     rotate(currentAngle)
     rect(0, 0, lineThickness, height / nRows)
@@ -93,6 +93,7 @@ function draw() {
 
   hLines.forEach(vector => {
     push()
+    fill(1);
     translate(vector.x, vector.y)
     rotate(currentAngle)
     rect(0, 0, width / nCols, lineThickness)
