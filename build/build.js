@@ -1,5 +1,5 @@
-var nCols = 51;
-var nRows = 51;
+var nCols = 6;
+var nRows = 6;
 var currentAngle = 0;
 var targetAngle = 0;
 var lineThickness = 9;

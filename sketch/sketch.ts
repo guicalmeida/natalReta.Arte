@@ -1,5 +1,5 @@
-let nCols = 51;
-let nRows = 51;
+let nCols = 6;
+let nRows = 6;
 let currentAngle = 0;
 let targetAngle = 0;
 
