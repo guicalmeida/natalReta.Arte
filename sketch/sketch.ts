@@ -1,11 +1,34 @@
-let nCols = 6;
-let nRows = 6;
+/**
+ * current angle, in degrees, the lines are relative to their starting point
+ */
 let currentAngle = 0;
+
+/**
+ * next angle, in degrees, lines should go to
+ */
 let targetAngle = 0;
 
-let lineThickness = 9;
-let canvasSize = 1200;
+/**
+ * X axis coordinates array that allow diferentiation between columns
+ */
 let gridXCenterCoords: number[] = [];
+
+
+/**
+ * number of columns and/or rows
+ */
+let nCols = 6;
+let nRows = 6;
+
+/**
+ * canvas size in pixels, apllied to both x and y axis
+ */
+let canvasSize = 1200;
+
+/**
+ * each line thickness, in pixels
+ */
+let lineThickness = 9;
 
 
 const vLines: p5.Vector[] = [];
@@ -25,6 +48,12 @@ function setup() {
   })
 }
 
+/**
+ * Divides the canvas in rows and columns
+ * @param rows number of rows in grid
+ * @param cols number of columns in grid
+ * @returns array of each quadrant center point coordinates
+ */
 function get2DGridCenterPoints(rows: number, cols: number): number[][] {
   let shapeCenterX = 0;
   let gridUnitWidth = width / rows;
