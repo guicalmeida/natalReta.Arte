@@ -37,7 +37,7 @@ function initInteractiveElements() {
     createP('cor das linhas em colunas pares').parent('oddPicker').class('pickerText');
 }
 var currentAngle = 0;
-var targetAngle = 0;
+var targetAngle = 90;
 var gridXCenterCoords = [];
 var canvasSize = 800;
 var evenLines = [];
@@ -45,13 +45,17 @@ var oddLines = [];
 var lineSize;
 var wWidth;
 var wHeight;
+var theta;
+var N_FRAMES = 120;
+var cycle = 240;
+var vLines = [];
+var hLines = [];
 function setup() {
     wWidth = windowWidth;
     wHeight = windowHeight;
     noStroke();
     createCanvas(windowHeight, windowHeight - 100).parent('canvasDiv');
     angleMode(DEGREES);
-    setInterval(function () { return targetAngle += 90; }, 3000);
     initInteractiveElements();
 }
 function draw() {
@@ -68,16 +72,19 @@ function draw() {
         currentXValue = hSliderValue;
         get2DGridCenterPoints(hSliderValue, vSliderValue);
     }
+    var t = (frameCount % N_FRAMES) / N_FRAMES;
+    if (t === 0) {
+        currentAngle = targetAngle;
+    }
+    t = easeInOutExpo(t);
+    var theta = map(t, 0, 1, currentAngle, targetAngle);
     background(backgroundColorPicker.color());
     rectMode(CENTER);
-    if (currentAngle < targetAngle) {
-        currentAngle++;
-    }
     evenLines.forEach(function (vector) {
         push();
         fill(evenLinesColorPicker.color());
         translate(vector.x, vector.y);
-        rotate(currentAngle);
+        rotate(theta);
         rect(0, 0, lineThicknessSlider.value(), lineSize);
         pop();
     });
@@ -85,15 +92,21 @@ function draw() {
         push();
         fill(oddLinesColorPicker.color());
         translate(vector.x, vector.y);
-        rotate(currentAngle);
+        rotate(theta);
         rect(0, 0, lineSize, lineThicknessSlider.value());
         pop();
     });
+    if (((frameCount % cycle) / cycle) === 0) {
+        targetAngle += 90;
+    }
     push();
     textSize(20);
     text(hSliderValue, 0, 0);
     fill(0);
     pop();
+}
+function easeInOutExpo(x) {
+    return x === 0 ? 0 : x === 1 ? 1 : x < 0.5 ? pow(2, 20 * x - 10) / 2 : (2 - pow(2, -20 * x + 10)) / 2;
 }
 function windowResized() {
     resizeCanvas(windowHeight, windowHeight - 100);
