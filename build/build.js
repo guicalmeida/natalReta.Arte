@@ -5,19 +5,52 @@ var nCols = 6;
 var nRows = 6;
 var canvasSize = 1200;
 var lineThickness = 9;
+var theta;
+var N_FRAMES = 120;
+var cycle = 240;
 var vLines = [];
 var hLines = [];
 function setup() {
     noStroke();
     createCanvas(canvasSize, canvasSize);
     angleMode(DEGREES);
-    setInterval(function () { return targetAngle += 90; }, 2500);
     var centerPoints = get2DGridCenterPoints(nRows, nCols);
     centerPoints.forEach(function (centerPoint) {
         gridXCenterCoords.indexOf(centerPoint[0]) % 2 === 0 ?
             vLines.push(createVector(centerPoint[0], centerPoint[1])) :
             hLines.push(createVector(centerPoint[0], centerPoint[1]));
     });
+}
+function draw() {
+    var t = (frameCount % N_FRAMES) / N_FRAMES;
+    if (t === 0) {
+        currentAngle = targetAngle;
+    }
+    t = easeInOutExpo(t);
+    var theta = map(t, 0, 1, currentAngle, targetAngle);
+    background(255);
+    fill(1);
+    rectMode(CENTER);
+    vLines.forEach(function (vector) {
+        push();
+        translate(vector.x, vector.y);
+        rotate(theta);
+        rect(0, 0, lineThickness, height / nRows);
+        pop();
+    });
+    hLines.forEach(function (vector) {
+        push();
+        translate(vector.x, vector.y);
+        rotate(theta);
+        rect(0, 0, width / nCols, lineThickness);
+        pop();
+    });
+    if (((frameCount % cycle) / cycle) === 0) {
+        targetAngle += 90;
+    }
+}
+function easeInOutExpo(x) {
+    return x === 0 ? 0 : x === 1 ? 1 : x < 0.5 ? pow(2, 20 * x - 10) / 2 : (2 - pow(2, -20 * x + 10)) / 2;
 }
 function get2DGridCenterPoints(rows, cols) {
     var shapeCenterX = 0;
@@ -34,27 +67,5 @@ function get2DGridCenterPoints(rows, cols) {
         }
     }
     return coordArray;
-}
-function draw() {
-    background(255);
-    fill(1);
-    rectMode(CENTER);
-    if (currentAngle < targetAngle) {
-        currentAngle++;
-    }
-    vLines.forEach(function (vector) {
-        push();
-        translate(vector.x, vector.y);
-        rotate(currentAngle);
-        rect(0, 0, lineThickness, height / nRows);
-        pop();
-    });
-    hLines.forEach(function (vector) {
-        push();
-        translate(vector.x, vector.y);
-        rotate(currentAngle);
-        rect(0, 0, width / nCols, lineThickness);
-        pop();
-    });
 }
 //# sourceMappingURL=build.js.map

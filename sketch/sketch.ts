@@ -30,6 +30,10 @@ let canvasSize = 1200;
  */
 let lineThickness = 9;
 
+let theta: number;
+
+const N_FRAMES = 120; // number of frames in each phase (static or transition)
+const cycle = 240;
 
 const vLines: p5.Vector[] = [];
 const hLines: p5.Vector[] = [];
@@ -38,7 +42,6 @@ function setup() {
   noStroke();
   createCanvas(canvasSize, canvasSize);
   angleMode(DEGREES);
-  setInterval(() => targetAngle += 90, 2500);
 
   const centerPoints = get2DGridCenterPoints(nRows, nCols);
   centerPoints.forEach((centerPoint) => {
@@ -48,13 +51,54 @@ function setup() {
   })
 }
 
+
+function draw() {
+  let t = (frameCount%N_FRAMES) / N_FRAMES;
+  if (t === 0){
+    currentAngle = targetAngle
+  }
+
+  t = easeInOutExpo(t);
+  let theta = map(t, 0, 1, currentAngle, targetAngle);
+
+  background(255);
+  fill(1);
+  rectMode(CENTER)
+  
+  vLines.forEach(vector => {
+    push()
+    translate(vector.x, vector.y)
+    rotate(theta)
+    rect(0, 0, lineThickness, height / nRows)
+    pop()
+  })
+
+  hLines.forEach(vector => {
+    push()
+    translate(vector.x, vector.y)
+    rotate(theta)
+    rect(0, 0, width / nCols, lineThickness)
+    pop()
+  })
+
+  if (((frameCount%cycle) / cycle )=== 0) {
+    targetAngle += 90;
+  }
+
+
+}
+
+function easeInOutExpo(x: number) {
+  return x === 0 ? 0: x === 1 ? 1: x < 0.5 ? pow(2, 20 * x - 10) / 2 : (2 - pow(2, -20 * x + 10)) / 2;
+}
+
 /**
  * Divides the canvas in rows and columns
  * @param rows number of rows in grid
  * @param cols number of columns in grid
  * @returns array of each quadrant center point coordinates
  */
-function get2DGridCenterPoints(rows: number, cols: number): number[][] {
+ function get2DGridCenterPoints(rows: number, cols: number): number[][] {
   let shapeCenterX = 0;
   let gridUnitWidth = width / rows;
 
@@ -74,28 +118,4 @@ function get2DGridCenterPoints(rows: number, cols: number): number[][] {
 
   return coordArray;
 
-}
-
-function draw() {
-  background(255);
-  fill(1);
-  rectMode(CENTER)
-  if (currentAngle < targetAngle) {
-    currentAngle++
-  }
-  vLines.forEach(vector => {
-    push()
-    translate(vector.x, vector.y)
-    rotate(currentAngle)
-    rect(0, 0, lineThickness, height / nRows)
-    pop()
-  })
-
-  hLines.forEach(vector => {
-    push()
-    translate(vector.x, vector.y)
-    rotate(currentAngle)
-    rect(0, 0, width / nCols, lineThickness)
-    pop()
-  })
 }
