@@ -16,17 +16,17 @@ let
 
 
 function initInteractiveElements(): void {
-  horizontalLinesSlider = createSlider(1, 51, 6).size(400).parent('sliders');
+  horizontalLinesSlider = createSlider(1, 51, 4).size(400).parent('sliders');
   hSliderP = createP(horizontalLinesSlider.value().toString()).parent('sliders');
   
-  verticalLinesSlider = createSlider(1, 51, 6).size(400).parent('sliders');
+  verticalLinesSlider = createSlider(1, 51, 4).size(400).parent('sliders');
   vSliderP = createP(verticalLinesSlider.value().toString()).parent('sliders');
 
-  lineThicknessSlider = createSlider(1, 20, 6).size(400).parent('sliders');
+  lineThicknessSlider = createSlider(1, 20, 5).size(400).parent('sliders');
   lineThicknessP = createP(lineThicknessSlider.value().toString()).parent('sliders');
 
 
-  backgroundColorPicker = createColorPicker('#c9262c').class('bgColorPicker').parent('bgPicker');
+  backgroundColorPicker = createColorPicker('#da2127').class('bgColorPicker').parent('bgPicker');
   createP('cor do fundo').parent('bgPicker').class('pickerText');
 
   evenLinesColorPicker = createColorPicker('#000000').class('evenLinesColorPicker').parent('evenPicker');

@@ -23,18 +23,24 @@ function get2DGridCenterPoints(rows, cols) {
 }
 var horizontalLinesSlider, verticalLinesSlider, lineThicknessSlider, backgroundColorPicker, evenLinesColorPicker, oddLinesColorPicker, hSliderValue, hSliderP, vSliderValue, vSliderP, lineThicknessValue, lineThicknessP, currentXValue, currentYValue;
 function initInteractiveElements() {
-    horizontalLinesSlider = createSlider(1, 51, 6).size(400).parent('sliders');
+    horizontalLinesSlider = createSlider(1, 51, 4).size(400).parent('sliders');
     hSliderP = createP(horizontalLinesSlider.value().toString()).parent('sliders');
-    verticalLinesSlider = createSlider(1, 51, 6).size(400).parent('sliders');
+    verticalLinesSlider = createSlider(1, 51, 4).size(400).parent('sliders');
     vSliderP = createP(verticalLinesSlider.value().toString()).parent('sliders');
-    lineThicknessSlider = createSlider(1, 20, 6).size(400).parent('sliders');
+    lineThicknessSlider = createSlider(1, 20, 5).size(400).parent('sliders');
     lineThicknessP = createP(lineThicknessSlider.value().toString()).parent('sliders');
-    backgroundColorPicker = createColorPicker('#c9262c').class('bgColorPicker').parent('bgPicker');
+    backgroundColorPicker = createColorPicker('#da2127').class('bgColorPicker').parent('bgPicker');
     createP('cor do fundo').parent('bgPicker').class('pickerText');
     evenLinesColorPicker = createColorPicker('#000000').class('evenLinesColorPicker').parent('evenPicker');
     createP('cor das linhas em colunas ímpares').parent('evenPicker').class('pickerText');
     oddLinesColorPicker = createColorPicker('#FFFFFF').class('oddLinesColorPicker').parent('oddPicker');
     createP('cor das linhas em colunas pares').parent('oddPicker').class('pickerText');
+}
+var boasfestas;
+var logo;
+function preload() {
+    boasfestas = loadImage('../assets/boas-festas.svg');
+    logo = loadImage('../assets/logo.svg');
 }
 var currentAngle = 0;
 var targetAngle = 90;
@@ -47,7 +53,7 @@ var wWidth;
 var wHeight;
 var theta;
 var N_FRAMES = 120;
-var cycle = 240;
+var cycle = 120;
 var vLines = [];
 var hLines = [];
 function setup() {
@@ -56,6 +62,7 @@ function setup() {
     noStroke();
     createCanvas(windowHeight, windowHeight - 100).parent('canvasDiv');
     angleMode(DEGREES);
+    imageMode(CENTER);
     initInteractiveElements();
 }
 function draw() {
@@ -76,7 +83,7 @@ function draw() {
     if (t === 0) {
         currentAngle = targetAngle;
     }
-    t = easeInOutExpo(t);
+    t = easeInOutQuad(t);
     var theta = map(t, 0, 1, currentAngle, targetAngle);
     background(backgroundColorPicker.color());
     rectMode(CENTER);
@@ -88,13 +95,31 @@ function draw() {
         rect(0, 0, lineThicknessSlider.value(), lineSize);
         pop();
     });
-    oddLines.forEach(function (vector) {
-        push();
-        fill(oddLinesColorPicker.color());
-        translate(vector.x, vector.y);
-        rotate(theta);
-        rect(0, 0, lineSize, lineThicknessSlider.value());
-        pop();
+    oddLines.forEach(function (vector, i) {
+        if (i === 1) {
+            push();
+            translate(vector.x, vector.y);
+            rotate(theta);
+            logo.resize(lineSize - 10, 0);
+            image(logo, 0, 0);
+            pop();
+        }
+        else if (i === 2) {
+            push();
+            translate(vector.x, vector.y);
+            rotate(theta);
+            boasfestas.resize(lineSize - 10, 0);
+            image(boasfestas, 0, 0);
+            pop();
+        }
+        else {
+            push();
+            fill(oddLinesColorPicker.color());
+            translate(vector.x, vector.y);
+            rotate(theta);
+            rect(0, 0, lineSize, lineThicknessSlider.value());
+            pop();
+        }
     });
     if (((frameCount % cycle) / cycle) === 0) {
         targetAngle += 90;
@@ -107,6 +132,9 @@ function draw() {
 }
 function easeInOutExpo(x) {
     return x === 0 ? 0 : x === 1 ? 1 : x < 0.5 ? pow(2, 20 * x - 10) / 2 : (2 - pow(2, -20 * x + 10)) / 2;
+}
+function easeInOutQuad(x) {
+    return x < 0.5 ? 2 * x * x : 1 - pow(-2 * x + 2, 2) / 2;
 }
 function windowResized() {
     resizeCanvas(windowHeight, windowHeight - 100);
